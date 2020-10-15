@@ -15,15 +15,15 @@ rm -f alis-recovery.sh
 rm -f alis-recovery-asciinema.sh
 rm -f alis-recovery-reboot.sh
 
-curl -O https://raw.githubusercontent.com/picodotdev/alis/sid/alis.conf
-curl -O https://raw.githubusercontent.com/picodotdev/alis/sid/alis.sh
-curl -O https://raw.githubusercontent.com/picodotdev/alis/sid/alis-asciinema.sh
-curl -O https://raw.githubusercontent.com/picodotdev/alis/sid/alis-reboot.sh
+curl -O https://raw.githubusercontent.com/pikachunakapika/alis/sid/alis.conf
+curl -O https://raw.githubusercontent.com/pikachunakapika/alis/sid/alis.sh
+curl -O https://raw.githubusercontent.com/pikachunakapika/alis/sid/alis-asciinema.sh
+curl -O https://raw.githubusercontent.com/pikachunakapika/alis/sid/alis-reboot.sh
 
-curl -O https://raw.githubusercontent.com/picodotdev/alis/sid/alis-recovery.conf
-curl -O https://raw.githubusercontent.com/picodotdev/alis/sid/alis-recovery.sh
-curl -O https://raw.githubusercontent.com/picodotdev/alis/sid/alis-recovery-asciinema.sh
-curl -O https://raw.githubusercontent.com/picodotdev/alis/sid/alis-recovery-reboot.sh
+curl -O https://raw.githubusercontent.com/pikachunakapika/alis/sid/alis-recovery.conf
+curl -O https://raw.githubusercontent.com/pikachunakapika/alis/sid/alis-recovery.sh
+curl -O https://raw.githubusercontent.com/pikachunakapika/alis/sid/alis-recovery-asciinema.sh
+curl -O https://raw.githubusercontent.com/pikachunakapika/alis/sid/alis-recovery-reboot.sh
 
 chmod +x alis.sh
 chmod +x alis-asciinema.sh
