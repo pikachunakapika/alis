@@ -3,7 +3,21 @@ set -e
 
 # Arch Linux Install Script (alis) installs unattended, automated
 # and customized Arch Linux system.
-# Copyright (C) 2018 picodotdev
+# Copyright (C) 2020 picodotdev
+
+GITHUB_USER="picodotdev"
+
+while getopts "u:" arg; do
+  case ${arg} in
+    u)
+      GITHUB_USER=${OPTARG}
+      ;;
+    ?)
+      echo "Invalid option: -${OPTARG}."
+      exit 1
+      ;;
+  esac
+done
 
 rm -f alis.conf
 rm -f alis.sh
@@ -15,6 +29,7 @@ rm -f alis-recovery.sh
 rm -f alis-recovery-asciinema.sh
 rm -f alis-recovery-reboot.sh
 
+<<<<<<< HEAD
 curl -O https://raw.githubusercontent.com/pikachunakapika/alis/master/alis.conf
 curl -O https://raw.githubusercontent.com/pikachunakapika/alis/master/alis.sh
 curl -O https://raw.githubusercontent.com/pikachunakapika/alis/master/alis-asciinema.sh
@@ -24,6 +39,17 @@ curl -O https://raw.githubusercontent.com/pikachunakapika/alis/master/alis-recov
 curl -O https://raw.githubusercontent.com/pikachunakapika/alis/master/alis-recovery.sh
 curl -O https://raw.githubusercontent.com/pikachunakapika/alis/master/alis-recovery-asciinema.sh
 curl -O https://raw.githubusercontent.com/pikachunakapika/alis/master/alis-recovery-reboot.sh
+=======
+curl -O https://raw.githubusercontent.com/$GITHUB_USER/alis/master/alis.conf
+curl -O https://raw.githubusercontent.com/$GITHUB_USER/alis/master/alis.sh
+curl -O https://raw.githubusercontent.com/$GITHUB_USER/alis/master/alis-asciinema.sh
+curl -O https://raw.githubusercontent.com/$GITHUB_USER/alis/master/alis-reboot.sh
+
+curl -O https://raw.githubusercontent.com/$GITHUB_USER/alis/master/alis-recovery.conf
+curl -O https://raw.githubusercontent.com/$GITHUB_USER/alis/master/alis-recovery.sh
+curl -O https://raw.githubusercontent.com/$GITHUB_USER/alis/master/alis-recovery-asciinema.sh
+curl -O https://raw.githubusercontent.com/$GITHUB_USER/alis/master/alis-recovery-reboot.sh
+>>>>>>> 56af82bf4d109ff4b368bea515924d54b35078ef
 
 chmod +x alis.sh
 chmod +x alis-asciinema.sh

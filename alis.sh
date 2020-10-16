@@ -3,7 +3,7 @@ set -e
 
 # Arch Linux Install Script (alis) installs unattended, automated
 # and customized Arch Linux system.
-# Copyright (C) 2018 picodotdev
+# Copyright (C) 2020 picodotdev
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ set -e
 
 # Usage:
 # # loadkeys es
-# # curl https://raw.githubusercontent.com/picodotdev/alis/master/download.sh | bash, or with URL shortener curl -sL https://bit.ly/2F3CATp | bash
+# # curl https://raw.githubusercontent.com/picodotdev/alis/master/download.sh | bash, curl https://raw.githubusercontent.com/picodotdev/alis/master/download.sh | bash -s -- -u [github user], or with URL shortener curl -sL https://bit.ly/2F3CATp | bash
 # # vim alis.conf
 # # ./alis.sh
 
@@ -696,6 +696,100 @@ function mkinitcpio_configuration() {
     if [ "$KERNELS_COMPRESSION" != "" ]; then
         arch-chroot /mnt sed -i 's/^#COMPRESSION="'"$KERNELS_COMPRESSION"'"/COMPRESSION="'"$KERNELS_COMPRESSION"'"/' /etc/mkinitcpio.conf
     fi
+
+    if [ "$KERNELS_COMPRESSION" == "bzip2" ]; then
+        pacman_install "bzip2"
+    fi
+    if [ "$KERNELS_COMPRESSION" == "lzma" -o "$KERNELS_COMPRESSION" == "xz" ]; then
+        pacman_install "xz"
+    fi
+    if [ "$KERNELS_COMPRESSION" == "lzop" ]; then
+        pacman_install "lzop"
+    fi
+    if [ "$KERNELS_COMPRESSION" == "lz4" ]; then
+        pacman_install "lz4"
+    fi
+}
+
+function display_driver() {
+    print_step "display_driver()"
+
+    PACKAGES_DRIVER=""
+    PACKAGES_DDX=""
+    PACKAGES_VULKAN=""
+    PACKAGES_HARDWARE_ACCELERATION=""
+    case "$DISPLAY_DRIVER" in
+        "nvidia" )
+            PACKAGES_DRIVER="nvidia"
+            ;;
+        "nvidia-lts" )
+            PACKAGES_DRIVER="nvidia-lts"
+            ;;
+        "nvidia-dkms" )
+            PACKAGES_DRIVER="nvidia-dkms"
+            ;;
+        "nvidia-390xx" )
+            PACKAGES_DRIVER="nvidia-390xx"
+            ;;
+        "nvidia-390xx-lts" )
+            PACKAGES_DRIVER="nvidia-390xx-lts"
+            ;;
+        "nvidia-390xx-dkms" )
+            PACKAGES_DRIVER="nvidia-390xx-dkms"
+            ;;
+    esac
+    if [ "$DISPLAY_DRIVER_DDX" == "true" ]; then
+        case "$DISPLAY_DRIVER" in
+            "intel" )
+                PACKAGES_DDX="xf86-video-intel"
+                ;;
+            "amdgpu" )
+                PACKAGES_DDX="xf86-video-amdgpu"
+                ;;
+            "ati" )
+                PACKAGES_DDX="xf86-video-ati"
+                ;;
+            "nouveau" )
+                PACKAGES_DDX="xf86-video-nouveau"
+                ;;
+        esac
+    fi
+    if [ "$VULKAN" == "true" ]; then
+        case "$DISPLAY_DRIVER" in
+            "intel" )
+                PACKAGES_VULKAN="vulkan-icd-loader vulkan-intel"
+                ;;
+            "amdgpu" )
+                PACKAGES_VULKAN="vulkan-icd-loader vulkan-radeon"
+                ;;
+            "ati" )
+                PACKAGES_VULKAN=""
+                ;;
+            "nouveau" )
+                PACKAGES_VULKAN=""
+                ;;
+        esac
+    fi
+    if [ "$DISPLAY_DRIVER_HARDWARE_ACCELERATION" == "true" ]; then
+        case "$DISPLAY_DRIVER" in
+            "intel" )
+                PACKAGES_HARDWARE_ACCELERATION="intel-media-driver"
+                if [ -n "$DISPLAY_DRIVER_HARDWARE_ACCELERATION_INTEL" ]; then
+                    PACKAGES_HARDWARE_ACCELERATION=$DISPLAY_DRIVER_HARDWARE_ACCELERATION_INTEL
+                fi
+                ;;
+            "amdgpu" )
+                PACKAGES_HARDWARE_ACCELERATION="libva-mesa-driver"
+                ;;
+            "ati" )
+                PACKAGES_HARDWARE_ACCELERATION="mesa-vdpau"
+                ;;
+            "nouveau" )
+                PACKAGES_HARDWARE_ACCELERATION="libva-mesa-driver"
+                ;;
+        esac
+    fi
+    pacman_install "mesa $PACKAGES_DRIVER $PACKAGES_DDX $PACKAGES_VULKAN $PACKAGES_HARDWARE_ACCELERATION"
 }
 
 function kernels() {
@@ -1171,83 +1265,6 @@ EOT
 function desktop_environment() {
     print_step "desktop_environment()"
 
-    PACKAGES_DRIVER=""
-    PACKAGES_DDX=""
-    PACKAGES_VULKAN=""
-    PACKAGES_HARDWARE_ACCELERATION=""
-    case "$DISPLAY_DRIVER" in
-        "nvidia" )
-            PACKAGES_DRIVER="nvidia"
-            ;;
-        "nvidia-lts" )
-            PACKAGES_DRIVER="nvidia-lts"
-            ;;
-        "nvidia-dkms" )
-            PACKAGES_DRIVER="nvidia-dkms"
-            ;;
-        "nvidia-390xx" )
-            PACKAGES_DRIVER="nvidia-390xx"
-            ;;
-        "nvidia-390xx-lts" )
-            PACKAGES_DRIVER="nvidia-390xx-lts"
-            ;;
-        "nvidia-390xx-dkms" )
-            PACKAGES_DRIVER="nvidia-390xx-dkms"
-            ;;
-    esac
-    if [ "$DISPLAY_DRIVER_DDX" == "true" ]; then
-        case "$DISPLAY_DRIVER" in
-            "intel" )
-                PACKAGES_DDX="xf86-video-intel"
-                ;;
-            "amdgpu" )
-                PACKAGES_DDX="xf86-video-amdgpu"
-                ;;
-            "ati" )
-                PACKAGES_DDX="xf86-video-ati"
-                ;;
-            "nouveau" )
-                PACKAGES_DDX="xf86-video-nouveau"
-                ;;
-        esac
-    fi
-    if [ "$VULKAN" == "true" ]; then
-        case "$DISPLAY_DRIVER" in
-            "intel" )
-                PACKAGES_VULKAN="vulkan-icd-loader vulkan-intel"
-                ;;
-            "amdgpu" )
-                PACKAGES_VULKAN="vulkan-icd-loader vulkan-radeon"
-                ;;
-            "ati" )
-                PACKAGES_VULKAN=""
-                ;;
-            "nouveau" )
-                PACKAGES_VULKAN=""
-                ;;
-        esac
-    fi
-    if [ "$DISPLAY_DRIVER_HARDWARE_ACCELERATION" == "true" ]; then
-        case "$DISPLAY_DRIVER" in
-            "intel" )
-                PACKAGES_HARDWARE_ACCELERATION="intel-media-driver"
-                if [ -n "$DISPLAY_DRIVER_HARDWARE_ACCELERATION_INTEL" ]; then
-                    PACKAGES_HARDWARE_ACCELERATION=$DISPLAY_DRIVER_HARDWARE_ACCELERATION_INTEL
-                fi
-                ;;
-            "amdgpu" )
-                PACKAGES_HARDWARE_ACCELERATION="libva-mesa-driver"
-                ;;
-            "ati" )
-                PACKAGES_HARDWARE_ACCELERATION="mesa-vdpau"
-                ;;
-            "nouveau" )
-                PACKAGES_HARDWARE_ACCELERATION="libva-mesa-driver"
-                ;;
-        esac
-    fi
-    pacman_install "mesa $PACKAGES_DRIVER $PACKAGES_DDX $PACKAGES_VULKAN $PACKAGES_HARDWARE_ACCELERATION"
-
     case "$DESKTOP_ENVIRONMENT" in
         "gnome" )
             desktop_environment_gnome
@@ -1513,7 +1530,7 @@ EOT
 }
 
 function main() {
-    ALL_STEPS=("configuration_install" "sanitize_variables" "check_variables" "warning" "init" "facts" "check_facts" "prepare" "partition" "install" "configuration" "mkinitcpio_configuration" "kernels" "mkinitcpio" "network" "virtualbox" "users" "bootloader" "desktop_environment" "packages" "systemd_units" "terminate" "end")
+    ALL_STEPS=("configuration_install" "sanitize_variables" "check_variables" "warning" "init" "facts" "check_facts" "prepare" "partition" "install" "configuration" "mkinitcpio_configuration" "display_driver" "kernels" "mkinitcpio" "network" "virtualbox" "users" "bootloader" "desktop_environment" "packages" "systemd_units" "terminate" "end")
     STEP="configuration_install"
 
     if [ -n "$1" ]; then
@@ -1549,6 +1566,9 @@ function main() {
     execute_step "install" "${STEPS}"
     execute_step "configuration" "${STEPS}"
     execute_step "mkinitcpio_configuration" "${STEPS}"
+    if [ -n "$DISPLAY_DRIVER" ]; then
+        execute_step "display_driver" "${STEPS}"
+    fi
     execute_step "kernels" "${STEPS}"
     execute_step "mkinitcpio" "${STEPS}"
     execute_step "network" "${STEPS}"
