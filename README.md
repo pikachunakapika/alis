@@ -36,6 +36,7 @@ For new features, improvements and bugs fill an issue in GitHub or make a pull r
 * Display managers: GDM, SDDM, Lightdm, lxdm
 * Graphics controller: intel, nvidia and amd with optionally early KMS start. With intel optionally fastboot, hardware video acceleration and framebuffer compression.
 * Bootloader: GRUB, rEFInd, systemd-boot
+* Custom shell: bash, zsh, dash, fish
 * WPA WIFI network installation
 * Periodic TRIM for SSD storage
 * Intel and AMD processors microcode
@@ -193,6 +194,7 @@ https://www.archlinux.org/download/
 * https://wiki.archlinux.org/index.php/Systemd-boot
 * https://wiki.archlinux.org/index.php/Systemd
 * https://wiki.archlinux.org/index.php/Microcode
+* https://wiki.archlinux.org/index.php/Command-line_shell
 * https://wiki.archlinux.org/index.php/Wayland
 * https://wiki.archlinux.org/index.php/Xorg
 * https://wiki.archlinux.org/index.php/Desktop_environment
